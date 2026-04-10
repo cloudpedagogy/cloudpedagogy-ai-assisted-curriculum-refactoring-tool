@@ -68,6 +68,11 @@ function App() {
 
   return (
     <div className="app-container">
+      <div className="branding-header">
+        <a href="https://www.cloudpedagogy.com/" target="_blank" rel="noopener noreferrer" className="cloud-pedagogy-link">
+          CloudPedagogy
+        </a>
+      </div>
       <header className="header">
         <div className="header-top">
           <h1>AI-Assisted Curriculum Refactoring Tool</h1>
@@ -141,7 +146,6 @@ function App() {
                 documents={dataset.documents} 
                 selectedDocId={viewMode === 'explorer' ? selectedDocIds[0] || null : null} 
                 onSelect={handleSelectDoc}
-                // Custom prop for displaying multiple selections in list if needed
               />
               
               {viewMode === 'explorer' ? (
@@ -164,6 +168,10 @@ function App() {
           </div>
         )}
       </main>
+
+      <footer className="footer">
+        <p className="footer-text">CloudPedagogy · Governance-ready AI and curriculum systems</p>
+      </footer>
     </div>
   )
 }

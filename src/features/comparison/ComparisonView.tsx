@@ -29,15 +29,15 @@ export const ComparisonView: React.FC<ComparisonViewProps> = ({ documents }) => 
       <div className="comparison-summary-bar">
         <div className="summary-item">
           <span className="label">Matched Sections:</span>
-          <span className="value success">{matchedCount}</span>
+          <span className="value">{matchedCount}</span>
         </div>
         <div className="summary-item">
           <span className="label">Differences:</span>
-          <span className="value warning">{differenceCount}</span>
+          <span className="value">{differenceCount}</span>
         </div>
         <div className="summary-item">
           <span className="label">Missing/New Sections:</span>
-          <span className="value danger">{missingCount}</span>
+          <span className="value">{missingCount}</span>
         </div>
         <div className="summary-item similarity">
           <span className="label">Similarity Score:</span>

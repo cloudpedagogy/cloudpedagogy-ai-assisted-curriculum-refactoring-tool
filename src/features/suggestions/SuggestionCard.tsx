@@ -29,7 +29,7 @@ export const SuggestionCard: React.FC<SuggestionCardProps> = ({
   return (
     <div className={`suggestion-card status-${suggestion.status}`}>
       <div className="suggestion-header">
-        <span className="ai-label">✨ AI-assisted suggestion</span>
+        <span className="ai-label">AI-assisted suggestion</span>
         <span className={`suggestion-status status-${suggestion.status}`}>
           {suggestion.status}
         </span>
