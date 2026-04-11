@@ -149,7 +149,7 @@ function App() {
               />
               
               {viewMode === 'explorer' ? (
-                <DocumentView document={primaryDoc} />
+                <DocumentView document={primaryDoc} dataset={dataset} />
               ) : viewMode === 'comparison' ? (
                 <ComparisonView documents={selectedDocs} />
               ) : (

@@ -2,6 +2,25 @@
 
 A local-first, governance-ready application for analyzing, harmonizing, and improving curriculum content through structured and AI-supported workflows.
 
+## 🔗 Role in the CloudPedagogy Ecosystem
+
+**Phase:** Phase 4 — Curriculum Extensions
+
+**Role:**
+Harmonizes and improves curriculum content by providing AI-supported suggestions and version comparison with a human-in-the-loop review layer.
+
+**Upstream Inputs:**
+Module Registry assets from the **Shared Module Repository System** and structural data from the **Mapping Engine**.
+
+**Downstream Outputs:**
+Provides refined curriculum drafts for validation in the **Curriculum Simulation Tool** and institutional **Governance Dashboard**.
+
+**Does NOT:**
+- Manage institutional governance workflows or systemic risk audits.
+- Perform detailed workload or student strain simulation.
+
+For a full system overview, see: [SYSTEM_OVERVIEW.md](../SYSTEM_OVERVIEW.md)
+
 This tool is designed to support academic lead reviews, identifying content gaps, identifying similarities, and providing actionable, human-verified refactoring suggestions across multiple curriculum versions.
 
 🌐 **Live Hosted Version**  

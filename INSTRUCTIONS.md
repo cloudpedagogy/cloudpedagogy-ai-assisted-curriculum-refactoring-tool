@@ -1,68 +1,49 @@
-# Instructions: AI-Assisted Curriculum Refactoring Tool
-
-This guide provides detailed instructions for setting up, running, and using the AI-Assisted Curriculum Refactoring Tool locally.
-
-## 🛠️ Local Development Setup
-
-### 1. Prerequisites
-Ensure you have the following installed on your machine:
-- **Node.js** (v18 or higher)
-- **npm** (comes with Node.js)
-
-### 2. Installation
-Open your terminal in the project root directory and run:
-```bash
-npm install
-```
-
-### 3. Running the Development Server
-To start the application in development mode with Hot Module Replacement (HMR):
-```bash
-npm run dev
-```
-Once started, the app will be available at `http://localhost:5173/`.
-
-### 4. Building for Production
-To generate a highly optimized static build in the `dist` folder:
-```bash
-npm run build
-```
-
-### 5. Previewing the Production Build
-To test the production build locally:
-```bash
-npm run preview
-```
+# AI-Assisted Curriculum Refactoring Tool — User Instructions
 
 ---
-
-## 📖 Usage Guide
-
-### 📂 Explorer Mode
-- **Goal**: Review individual curriculum documents.
-- **How-to**: Click on any course version in the left-hand list to view its full pedagogical structure and content blocks.
-
-### ⚔️ Comparison Mode
-- **Goal**: Perform side-by-side diffing between two curriculum versions.
-- **How-to**: 
-  1. Toggle to **Comparison** mode in the top navigation.
-  2. Select two versions from the list.
-  3. View matched, modified, and removed blocks highlighted with semantic status tags.
-
-### ✨ Refactoring & Governance Mode
-- **Goal**: Evaluate AI-assisted improvements with human oversight.
-- **How-to**:
-  1. Navigate to the **Refactoring** tab.
-  2. Review the **AI-assisted suggestions** (clearly labeled with rationales).
-  3. Use the decision controls:
-     - **Accept**: Commit the suggestion as a curriculum refinement.
-     - **Modify**: Edit the suggestion text before acceptance.
-     - **Reject**: Dismiss the suggestion.
-  4. Monitor the **Governance Metrics** in the dashboard to track review progress.
+### 2. What This Tool Does
+This application provides AI-supported harmonization and improvement of curriculum text. It ensures that locally drafted learning outcomes and assessment criteria adhere to institutional guidelines and recognized academic frameworks (like Bloom's Taxonomy).
 
 ---
+### 3. Role in the Ecosystem
+- **Phase:** Phase 4 — Curriculum Extensions
+- **Role:** AI-supported harmonization and improvement of curriculum content.
+- **Reference:** [../SYSTEM_OVERVIEW.md](../SYSTEM_OVERVIEW.md)
 
-## 🏛️ Privacy & Local-First
-- All data is processed **locally in your browser**.
-- Refactoring decisions are persisted in your browser's `localStorage`.
-- No curriculum content or decision data is transmitted to external servers.
+---
+### 4. When to Use This Tool
+- When a draft curriculum is structurally sound but poorly written or inconsistent.
+- When an old curriculum requires rapid updating to meet new institutional formatting standards.
+- To ensure action verbs in learning outcomes are measurable and appropriate for the academic level.
+
+---
+### 5. Inputs
+- Manual text entry of draft curriculum documentation, or structured JSON import from upstream curriculum design tools.
+
+---
+### 6. How to Use (Step-by-Step)
+1. Load or paste your draft learning outcomes and assessment descriptions.
+2. Select the target framework or harmonization goal (e.g., "Align to Bloom's Level 6", "Standardize Institutional Tone").
+3. Review the AI-generated suggestions compared side-by-side with the original text.
+4. Accept, reject, or manually edit the suggestions locally.
+5. Crucially, explicitly document your rationale for accepting sweeping AI changes.
+6. Export the refined text as a JSON or Markdown file.
+
+---
+### 7. Key Outputs
+- Clean, harmonized academic text ready for publication or committee review.
+- A log of accepted changes confirming human oversight of the rewriting process.
+
+---
+### 8. How It Connects to Other Tools
+- **Upstream:** Generally refines draft texts from the **Mapping Engine** or **Shared Module Repository**.
+- **Downstream:** Because it uses AI to generate content, heavy use might require documentation via the **Human-AI Decision Record**.
+
+---
+### 9. Limitations
+- The AI focuses on form and structure; it cannot verify if the academic *content* is factually correct.
+- High risk of generating homogenization if staff accept all suggestions without critical thought.
+
+---
+### 10. Tips
+- Use this tool explicitly for "refactoring" (improving existing foundations), never for "generation from zero."
