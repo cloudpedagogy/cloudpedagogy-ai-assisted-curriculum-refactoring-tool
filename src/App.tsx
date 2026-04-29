@@ -159,6 +159,67 @@ function App() {
                 />
               )}
             </div>
+
+            {/* Lightweight capability and governance layer */}
+            {/* Optional, non-blocking, and does not alter core workflow */}
+            <div className="governance-section" style={{ marginTop: '2rem', padding: '1rem', borderTop: '1px solid #e2e8f0' }}>
+              <details style={{ fontSize: '0.85rem', color: '#4a5568' }}>
+                <summary style={{ cursor: 'pointer', fontWeight: '600', padding: '0.5rem', backgroundColor: '#f7fafc', borderRadius: '4px', display: 'inline-block' }}>
+                  Capability & Governance Notes (Optional)
+                </summary>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', marginTop: '1rem', maxWidth: '600px' }}>
+                  <label style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
+                    <strong>AI Involvement</strong>
+                    <input 
+                      type="text" 
+                      value={dataset.aiInvolvement || ''} 
+                      onChange={(e) => handleUpdateDataset({...dataset, aiInvolvement: e.target.value})}
+                      style={{ padding: '0.5rem', border: '1px solid #cbd5e0', borderRadius: '4px', fontSize: '0.85rem' }}
+                      placeholder="e.g. AI used to generate initial curriculum gap analysis"
+                    />
+                  </label>
+                  <label style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
+                    <strong>Assumptions</strong>
+                    <input 
+                      type="text" 
+                      value={dataset.assumptions || ''} 
+                      onChange={(e) => handleUpdateDataset({...dataset, assumptions: e.target.value})}
+                      style={{ padding: '0.5rem', border: '1px solid #cbd5e0', borderRadius: '4px', fontSize: '0.85rem' }}
+                      placeholder="e.g. Baseline competency maps are accurate"
+                    />
+                  </label>
+                  <label style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
+                    <strong>Risks or concerns</strong>
+                    <input 
+                      type="text" 
+                      value={dataset.risks || ''} 
+                      onChange={(e) => handleUpdateDataset({...dataset, risks: e.target.value})}
+                      style={{ padding: '0.5rem', border: '1px solid #cbd5e0', borderRadius: '4px', fontSize: '0.85rem' }}
+                      placeholder="e.g. Over-reliance on auto-generated outcomes"
+                    />
+                  </label>
+                  <label style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
+                    <strong>Rationale</strong>
+                    <input 
+                      type="text" 
+                      value={dataset.rationale || ''} 
+                      onChange={(e) => handleUpdateDataset({...dataset, rationale: e.target.value})}
+                      style={{ padding: '0.5rem', border: '1px solid #cbd5e0', borderRadius: '4px', fontSize: '0.85rem' }}
+                      placeholder="e.g. Streamlining module redesign for 2027"
+                    />
+                  </label>
+                  <label style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
+                    <strong>Human review notes</strong>
+                    <textarea 
+                      value={dataset.reviewNotes || ''} 
+                      onChange={(e) => handleUpdateDataset({...dataset, reviewNotes: e.target.value})}
+                      style={{ padding: '0.5rem', border: '1px solid #cbd5e0', borderRadius: '4px', minHeight: '60px', fontFamily: 'inherit', fontSize: '0.85rem' }}
+                      placeholder="Reviewer notes and sign-off"
+                    />
+                  </label>
+                </div>
+              </details>
+            </div>
           </>
         ) : (
           <div className="empty-state">

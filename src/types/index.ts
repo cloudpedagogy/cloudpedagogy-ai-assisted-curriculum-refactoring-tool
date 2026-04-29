@@ -80,4 +80,12 @@ export interface CombinedDataset {
   learningOutcomes: LearningOutcome[];
   suggestions: RefactoringSuggestion[];
   comparisons: ComparisonResult[];
+  
+  // Lightweight capability and governance layer
+  // Optional, non-blocking, and does not alter core workflow
+  aiInvolvement?: string;
+  assumptions?: string;
+  risks?: string;
+  rationale?: string;
+  reviewNotes?: string;
 }

@@ -47,3 +47,12 @@ This application provides AI-supported harmonization and improvement of curricul
 ---
 ### 10. Tips
 - Use this tool explicitly for "refactoring" (improving existing foundations), never for "generation from zero."
+
+---
+### 11. Capability and Governance
+
+This tool supports both AI capability development and lightweight governance.
+
+- **Capability:** is developed through structured interaction with real workflows, allowing users to build practical judgement regarding AI outputs.
+- **Governance:** is supported through an optional, collapsible "Capability & Governance Notes" section at the bottom of the interface. This makes assumptions, risks, and decisions visible.
+- **Optional Fields:** The section includes fields for AI Involvement, Assumptions, Risks or concerns, Rationale, and Human review notes. All governance inputs are optional and designed to support — not constrain — professional judgement.

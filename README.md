@@ -19,7 +19,6 @@ Provides refined curriculum drafts for validation in the **Curriculum Simulation
 - Manage institutional governance workflows or systemic risk audits.
 - Perform detailed workload or student strain simulation.
 
-For a full system overview, see: [SYSTEM_OVERVIEW.md](../SYSTEM_OVERVIEW.md)
 
 This tool is designed to support academic lead reviews, identifying content gaps, identifying similarities, and providing actionable, human-verified refactoring suggestions across multiple curriculum versions.
 
@@ -69,3 +68,12 @@ CloudPedagogy develops open, governance-credible resources for building confiden
 
 **Remote Repository**:  
 [https://github.com/cloudpedagogy/cloudpedagogy-ai-assisted-curriculum-refactoring-tool.git](https://github.com/cloudpedagogy/cloudpedagogy-ai-assisted-curriculum-refactoring-tool.git)
+
+## Capability and Governance
+
+This tool supports both AI capability development and lightweight governance.
+
+- Capability is developed through structured interaction with real workflows
+- Governance is supported through optional fields that make assumptions, risks, and decisions visible
+
+All governance inputs are optional and designed to support — not constrain — professional judgement.

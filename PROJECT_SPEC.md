@@ -56,3 +56,12 @@ The most granular tool in the suite; provides an explicit audit trail of "Ration
 
 ## 15. Anything Unclear or Inferred from Repo Contents
 The specific AI model requirements for generating `RefactoringSuggestion` rationale are inferred as external but provided via the tool's interface logic.
+
+## Capability and Governance Alignment
+
+This tool is aligned with the CloudPedagogy Capability and Governance standard.
+
+- Capability: The tool supports development of practical AI capability through structured interaction and workflow use.
+- Governance: The tool includes lightweight, optional fields that make assumptions, risks, and decisions visible and reviewable.
+
+This alignment ensures the tool supports both effective use of AI and responsible, accountable practice.
