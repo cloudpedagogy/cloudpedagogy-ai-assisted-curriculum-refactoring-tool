@@ -6,11 +6,12 @@ import { DocumentList } from './features/content/DocumentList'
 import { DocumentView } from './features/content/DocumentView'
 import { ComparisonView } from './features/comparison/ComparisonView'
 import { SuggestionView } from './features/suggestions/SuggestionView'
+import { OutcomeManager } from './features/outcomes/OutcomeManager'
 import { ImportExportModal } from './components/ImportExportModal'
 import { ErrorBoundary } from './components/ErrorBoundary'
 import type { CombinedDataset } from './types'
 
-type ViewMode = 'explorer' | 'comparison' | 'suggestions';
+type ViewMode = 'explorer' | 'comparison' | 'suggestions' | 'outcomes';
 
 function App() {
   // Safe lazy state initialization avoiding synchronous setState in effects
@@ -110,7 +111,9 @@ function App() {
   };
 
   const selectedDocs = dataset?.documents.filter(doc => selectedDocIds.includes(doc.id)) || [];
-  const primaryDoc = selectedDocs.length > 0 ? selectedDocs[0] : null;
+  const primaryDoc = selectedDocs.length > 0
+    ? selectedDocs[0]
+    : (dataset?.documents[0] || null);
 
   return (
     <ErrorBoundary>
@@ -165,17 +168,25 @@ function App() {
               className={`mode-btn ${viewMode === 'suggestions' ? 'active' : ''}`}
               onClick={() => handleModeChange('suggestions')}
               aria-pressed={viewMode === 'suggestions'}
-              aria-label="Switch to Suggestions View"
+              aria-label="Switch to Refactoring View"
             >
               Refactoring
+            </button>
+            <button
+              className={`mode-btn ${viewMode === 'outcomes' ? 'active' : ''}`}
+              onClick={() => handleModeChange('outcomes')}
+              aria-pressed={viewMode === 'outcomes'}
+              aria-label="Switch to Learning Outcomes View"
+            >
+              Learning Outcomes
             </button>
           </nav>
 
           <p className="description">
-            A local-first tool for analysing, harmonising, and improving curriculum content through structured and governance-ready AI-supported workflows.
+            A local-first tool for analysing, harmonising, and improving curriculum content through structured and governance-ready heuristic workflows.
           </p>
           <div className="disclaimer">
-            <strong>Governance Note:</strong> This tool provides structured and AI-assisted support for curriculum review and improvement. AI-generated suggestions should be critically evaluated. Final decisions remain the responsibility of academic staff.
+            <strong>Governance Note:</strong> This tool provides transparent, rule-assisted diagnostic indicators for curriculum review. Heuristic suggestions should be critically evaluated. Final decisions remain the responsibility of academic staff.
             <br /><br />
             <small>The tool is designed to support transparency, human oversight, and governance-ready decision-making.</small>
           </div>
@@ -230,24 +241,38 @@ function App() {
                 </div>
               </section>
 
-              <div className="content-explorer">
-                <DocumentList
-                  documents={dataset.documents}
-                  selectedDocId={viewMode === 'explorer' ? selectedDocIds[0] || null : null}
-                  onSelect={handleSelectDoc}
-                />
-
-                {viewMode === 'explorer' ? (
-                  <DocumentView document={primaryDoc} dataset={dataset} />
-                ) : viewMode === 'comparison' ? (
-                  <ComparisonView documents={selectedDocs} />
-                ) : (
-                  <SuggestionView
-                    dataset={dataset}
-                    onUpdateDataset={handleUpdateDataset}
+              {viewMode === 'explorer' && (
+                <div className="content-explorer">
+                  <DocumentList
+                    documents={dataset.documents}
+                    selectedDocId={primaryDoc?.id || null}
+                    onSelect={handleSelectDoc}
                   />
-                )}
-              </div>
+                  <DocumentView document={primaryDoc} dataset={dataset} />
+                </div>
+              )}
+
+              {viewMode === 'comparison' && (
+                <ComparisonView documents={dataset.documents} />
+              )}
+
+              {viewMode === 'suggestions' && (
+                <SuggestionView
+                  dataset={dataset}
+                  onUpdateDataset={handleUpdateDataset}
+                  onSelectDocumentForView={(docId) => {
+                    setSelectedDocIds([docId]);
+                    setViewMode('explorer');
+                  }}
+                />
+              )}
+
+              {viewMode === 'outcomes' && (
+                <OutcomeManager
+                  dataset={dataset}
+                  onUpdateDataset={handleUpdateDataset}
+                />
+              )}
 
               {/* Lightweight capability and governance layer */}
               {/* Optional, non-blocking, and does not alter core workflow */}
@@ -264,7 +289,7 @@ function App() {
                         value={dataset.aiInvolvement || ''}
                         onChange={(e) => handleUpdateDataset({...dataset, aiInvolvement: e.target.value})}
                         style={{ padding: '0.5rem', border: '1px solid #cbd5e0', borderRadius: '4px', fontSize: '0.85rem' }}
-                        placeholder="e.g. AI used to generate initial curriculum gap analysis"
+                        placeholder="e.g. Heuristic rule-assisted analysis for alignment and clarity"
                       />
                     </label>
                     <label style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>

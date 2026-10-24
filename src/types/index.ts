@@ -79,6 +79,8 @@ export interface RefactoringSuggestion {
   status: 'pending' | 'accepted' | 'rejected' | 'modified';
   reviewedAt?: string;
   reviewerNotes?: string; // Human review rationale or notes for this decision
+  isOutdated?: boolean; // Flagged if underlying block content changed after generation/review
+  outdatedReason?: string;
 }
 
 /**
