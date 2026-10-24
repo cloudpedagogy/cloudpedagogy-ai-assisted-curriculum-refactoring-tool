@@ -88,6 +88,7 @@ export const ComparisonView: React.FC<ComparisonViewProps> = ({ documents }) => 
           className="btn btn-outline btn-sm"
           onClick={handleSwap}
           title="Swap source baseline and comparison target"
+          aria-label="Swap source baseline and comparison target versions"
           style={{ padding: '0.45rem 0.75rem', fontWeight: 600 }}
         >
           ⇄ Swap Versions
@@ -125,15 +126,15 @@ export const ComparisonView: React.FC<ComparisonViewProps> = ({ documents }) => 
         </div>
         <div className="summary-item">
           <span className="label">Modified:</span>
-          <span className="value" style={{ color: '#d97706' }}>{differenceCount}</span>
+          <span className="value" style={{ color: '#92400e' }}>{differenceCount}</span>
         </div>
         <div className="summary-item">
           <span className="label">Removed:</span>
-          <span className="value" style={{ color: '#dc2626' }}>{removedCount}</span>
+          <span className="value" style={{ color: '#991b1b' }}>{removedCount}</span>
         </div>
         <div className="summary-item">
           <span className="label">Added:</span>
-          <span className="value" style={{ color: '#16a34a' }}>{addedCount}</span>
+          <span className="value" style={{ color: '#166534' }}>{addedCount}</span>
         </div>
         <div className="summary-item similarity">
           <span className="label">Structural Similarity:</span>
@@ -207,15 +208,17 @@ export const ComparisonView: React.FC<ComparisonViewProps> = ({ documents }) => 
                   background: 'white',
                   border: '1px solid var(--border)',
                   color: isModified
-                    ? '#d97706'
+                    ? '#92400e'
                     : isAdded
-                      ? '#16a34a'
+                      ? '#166534'
                       : isRemoved
-                        ? '#dc2626'
-                        : 'var(--muted)'
+                        ? '#991b1b'
+                        : '#475569'
                 }}
               >
-                {row.status}
+                {row.status === 'modified' ? '✎ Modified' :
+                 row.status === 'added' ? '+ Added' :
+                 row.status === 'removed' ? '- Removed' : '= Matched'}
                 {row.similarity !== undefined && row.status === 'modified' && (
                   <span> ({Math.round(row.similarity * 100)}% match)</span>
                 )}
@@ -256,12 +259,12 @@ export const ComparisonView: React.FC<ComparisonViewProps> = ({ documents }) => 
                           <h4 style={{ margin: 0 }}>
                             {wordDiff.map((chunk, idx) => (
                               chunk.type === 'added' ? (
-                                <ins key={idx} style={{ background: '#dcfce7', color: '#166534', textDecoration: 'none', padding: '1px 3px' }}>
-                                  {chunk.text}
+                                <ins key={idx} aria-label={`Added: ${chunk.text}`} style={{ background: '#dcfce7', color: '#166534', textDecoration: 'underline', textUnderlineOffset: '2px', padding: '1px 3px' }}>
+                                  <span className="sr-only">[Added: ]</span>{chunk.text}
                                 </ins>
                               ) : chunk.type === 'removed' ? (
-                                <del key={idx} style={{ background: '#fee2e2', color: '#991b1b', textDecoration: 'line-through', padding: '1px 3px' }}>
-                                  {chunk.text}
+                                <del key={idx} aria-label={`Removed: ${chunk.text}`} style={{ background: '#fee2e2', color: '#991b1b', textDecoration: 'line-through', padding: '1px 3px' }}>
+                                  <span className="sr-only">[Removed: ]</span>{chunk.text}
                                 </del>
                               ) : (
                                 <span key={idx}>{chunk.text}</span>
@@ -272,12 +275,12 @@ export const ComparisonView: React.FC<ComparisonViewProps> = ({ documents }) => 
                           <p style={{ margin: 0, fontSize: '0.9rem', lineHeight: 1.5 }}>
                             {wordDiff.map((chunk, idx) => (
                               chunk.type === 'added' ? (
-                                <ins key={idx} style={{ background: '#dcfce7', color: '#166534', textDecoration: 'none', padding: '1px 3px', borderRadius: '3px' }}>
-                                  {chunk.text}
+                                <ins key={idx} aria-label={`Added: ${chunk.text}`} style={{ background: '#dcfce7', color: '#166534', textDecoration: 'underline', textUnderlineOffset: '2px', padding: '1px 3px', borderRadius: '3px' }}>
+                                  <span className="sr-only">[Added: ]</span>{chunk.text}
                                 </ins>
                               ) : chunk.type === 'removed' ? (
-                                <del key={idx} style={{ background: '#fee2e2', color: '#991b1b', textDecoration: 'line-through', padding: '1px 3px', borderRadius: '3px' }}>
-                                  {chunk.text}
+                                <del key={idx} aria-label={`Removed: ${chunk.text}`} style={{ background: '#fee2e2', color: '#991b1b', textDecoration: 'line-through', padding: '1px 3px', borderRadius: '3px' }}>
+                                  <span className="sr-only">[Removed: ]</span>{chunk.text}
                                 </del>
                               ) : (
                                 <span key={idx}>{chunk.text}</span>

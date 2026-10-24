@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import type { CombinedDataset } from '../types';
 import {
   parseAndValidateImport,
@@ -6,6 +6,7 @@ import {
   exportCurriculumAsMarkdown,
   exportDecisionRecordAsJson,
   exportDecisionRecordAsMarkdown,
+  exportDecisionRecordAsHtml,
   downloadTextFile
 } from '../lib/io';
 import { mergeDatasets } from '../lib/validation/datasetValidation';
@@ -18,7 +19,7 @@ interface ImportExportModalProps {
   onImportDataset: (dataset: CombinedDataset) => void;
 }
 
-type ExportFormat = 'dataset-json' | 'curriculum-md' | 'decision-md' | 'decision-json';
+type ExportFormat = 'dataset-json' | 'curriculum-md' | 'decision-html' | 'decision-md' | 'decision-json';
 
 export const ImportExportModal: React.FC<ImportExportModalProps> = ({
   isOpen,
@@ -37,9 +38,66 @@ export const ImportExportModal: React.FC<ImportExportModalProps> = ({
   const [importSuccessMessage, setImportSuccessMessage] = useState<string | null>(null);
 
   // Export State
-  const [exportFormat, setExportFormat] = useState<ExportFormat>('dataset-json');
+  const [exportFormat, setExportFormat] = useState<ExportFormat>('decision-html');
   const [selectedDocId, setSelectedDocId] = useState<string>('all');
   const [copyFeedback, setCopyFeedback] = useState(false);
+  const [downloadFeedback, setDownloadFeedback] = useState<string | null>(null);
+
+  const modalRef = useRef<HTMLDivElement>(null);
+  const previouslyFocusedElementRef = useRef<HTMLElement | null>(null);
+
+  // Focus restoration & Escape key handler
+  useEffect(() => {
+    if (isOpen) {
+      previouslyFocusedElementRef.current = document.activeElement as HTMLElement;
+      // Focus first actionable element
+      const timer = setTimeout(() => {
+        const focusable = modalRef.current?.querySelectorAll<HTMLElement>(
+          'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+        );
+        if (focusable && focusable.length > 0) {
+          focusable[0].focus();
+        }
+      }, 50);
+      return () => clearTimeout(timer);
+    } else if (previouslyFocusedElementRef.current) {
+      previouslyFocusedElementRef.current.focus();
+    }
+  }, [isOpen]);
+
+  useEffect(() => {
+    if (!isOpen) return;
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        onClose();
+        return;
+      }
+      if (e.key === 'Tab' && modalRef.current) {
+        const focusables = modalRef.current.querySelectorAll<HTMLElement>(
+          'button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
+        );
+        if (focusables.length === 0) return;
+        const first = focusables[0];
+        const last = focusables[focusables.length - 1];
+
+        if (e.shiftKey) {
+          if (document.activeElement === first) {
+            e.preventDefault();
+            last.focus();
+          }
+        } else {
+          if (document.activeElement === last) {
+            e.preventDefault();
+            first.focus();
+          }
+        }
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isOpen, onClose]);
 
   if (!isOpen) return null;
 
@@ -107,6 +165,12 @@ export const ImportExportModal: React.FC<ImportExportModalProps> = ({
     const timestamp = new Date().toISOString().replace(/[:.]/g, '-').slice(0, 19);
 
     switch (exportFormat) {
+      case 'decision-html':
+        return {
+          content: exportDecisionRecordAsHtml(dataset),
+          filename: `institutional-governance-record-${timestamp}.html`,
+          mime: 'text/html'
+        };
       case 'dataset-json':
         return {
           content: exportDatasetAsJson(dataset),
@@ -125,7 +189,7 @@ export const ImportExportModal: React.FC<ImportExportModalProps> = ({
       case 'decision-md':
         return {
           content: exportDecisionRecordAsMarkdown(dataset),
-          filename: `human-ai-decision-record-${timestamp}.md`,
+          filename: `institutional-governance-record-${timestamp}.md`,
           mime: 'text/markdown'
         };
       case 'decision-json':
@@ -142,6 +206,8 @@ export const ImportExportModal: React.FC<ImportExportModalProps> = ({
   const handleDownload = () => {
     if (!exportData.content) return;
     downloadTextFile(exportData.content, exportData.filename, exportData.mime);
+    setDownloadFeedback(`Downloaded ${exportData.filename}`);
+    setTimeout(() => setDownloadFeedback(null), 3000);
   };
 
   const handleCopyClipboard = async () => {
@@ -155,12 +221,26 @@ export const ImportExportModal: React.FC<ImportExportModalProps> = ({
     }
   };
 
+  const handlePrintHtml = () => {
+    if (!exportData.content) return;
+    const printWindow = window.open('', '_blank');
+    if (printWindow) {
+      printWindow.document.write(exportData.content);
+      printWindow.document.close();
+      printWindow.focus();
+      setTimeout(() => {
+        printWindow.print();
+      }, 250);
+    }
+  };
+
   return (
     <div
       className="modal-backdrop"
       role="dialog"
       aria-modal="true"
       aria-labelledby="import-export-title"
+      aria-describedby="import-export-desc"
       style={{
         position: 'fixed',
         top: 0,
@@ -179,12 +259,14 @@ export const ImportExportModal: React.FC<ImportExportModalProps> = ({
       }}
     >
       <div
+        ref={modalRef}
         className="modal-card"
+        tabIndex={-1}
         style={{
           background: '#ffffff',
           borderRadius: '8px',
           width: '100%',
-          maxWidth: '750px',
+          maxWidth: '780px',
           maxHeight: '90vh',
           display: 'flex',
           flexDirection: 'column',
@@ -193,6 +275,19 @@ export const ImportExportModal: React.FC<ImportExportModalProps> = ({
           overflow: 'hidden'
         }}
       >
+        {/* Live region for screen readers */}
+        <div
+          role="status"
+          aria-live="polite"
+          aria-atomic="true"
+          style={{ position: 'absolute', width: 1, height: 1, overflow: 'hidden', clip: 'rect(0, 0, 0, 0)' }}
+        >
+          {copyFeedback && 'Export content copied to clipboard.'}
+          {downloadFeedback && downloadFeedback}
+          {importSuccessMessage && importSuccessMessage}
+          {importError && `Import error: ${importError}`}
+        </div>
+
         {/* Modal Header */}
         <div style={{
           padding: '1.25rem 1.5rem',
@@ -203,10 +298,10 @@ export const ImportExportModal: React.FC<ImportExportModalProps> = ({
         }}>
           <div>
             <h3 id="import-export-title" style={{ margin: 0, fontSize: '1.2rem', fontWeight: 700 }}>
-              Curriculum Data Interchange
+              Curriculum Data Interchange &amp; Reporting
             </h3>
-            <p style={{ margin: '0.25rem 0 0 0', fontSize: '0.85rem', color: '#555555' }}>
-              Import external curriculum files or export validated datasets and governance records.
+            <p id="import-export-desc" style={{ margin: '0.25rem 0 0 0', fontSize: '0.85rem', color: '#555555' }}>
+              Import external curriculum files or export validated datasets and institutional governance records.
             </p>
           </div>
           <button
@@ -229,6 +324,8 @@ export const ImportExportModal: React.FC<ImportExportModalProps> = ({
         <div style={{ display: 'flex', borderBottom: '1px solid #e5e7eb', background: '#f9fafb' }}>
           <button
             onClick={() => handleTabChange('export')}
+            aria-selected={activeTab === 'export'}
+            role="tab"
             style={{
               flex: 1,
               padding: '0.85rem 1rem',
@@ -241,10 +338,12 @@ export const ImportExportModal: React.FC<ImportExportModalProps> = ({
               fontSize: '0.9rem'
             }}
           >
-            Export Formats
+            Export &amp; Governance Reports
           </button>
           <button
             onClick={() => handleTabChange('import')}
+            aria-selected={activeTab === 'import'}
+            role="tab"
             style={{
               flex: 1,
               padding: '0.85rem 1rem',
@@ -257,16 +356,16 @@ export const ImportExportModal: React.FC<ImportExportModalProps> = ({
               fontSize: '0.9rem'
             }}
           >
-            Import Curriculum
+            Import Curriculum Dataset
           </button>
         </div>
 
         {/* Modal Body */}
-        <div style={{ padding: '1.5rem', overflowY: 'auto', flex: 1 }}>
+        <div style={{ padding: '1.5rem', overflowY: 'auto' }}>
           {activeTab === 'export' ? (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
               {!dataset ? (
-                <div style={{ padding: '2rem', textAlign: 'center', color: '#555555' }}>
+                <div style={{ padding: '2rem', textAlign: 'center', color: '#555555', background: '#f9fafb', borderRadius: '6px' }}>
                   No dataset is currently loaded to export. Please load demo data or import curriculum first.
                 </div>
               ) : (
@@ -278,6 +377,26 @@ export const ImportExportModal: React.FC<ImportExportModalProps> = ({
                     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '0.75rem' }}>
                       <button
                         type="button"
+                        onClick={() => setExportFormat('decision-html')}
+                        style={{
+                          textAlign: 'left',
+                          padding: '0.75rem',
+                          borderRadius: '6px',
+                          border: `1px solid ${exportFormat === 'decision-html' ? '#111111' : '#e0e0e0'}`,
+                          background: exportFormat === 'decision-html' ? '#f3f4f6' : '#ffffff',
+                          cursor: 'pointer'
+                        }}
+                        aria-pressed={exportFormat === 'decision-html'}
+                        aria-label="Institutional Governance Record HTML with print and PDF support"
+                      >
+                        <div style={{ fontWeight: 600, fontSize: '0.9rem' }}>Governance Record (HTML / PDF)</div>
+                        <div style={{ fontSize: '0.75rem', color: '#555555', marginTop: '0.2rem' }}>
+                          Printable audit report with print styles for browser Save as PDF
+                        </div>
+                      </button>
+
+                      <button
+                        type="button"
                         onClick={() => setExportFormat('dataset-json')}
                         style={{
                           textAlign: 'left',
@@ -287,28 +406,12 @@ export const ImportExportModal: React.FC<ImportExportModalProps> = ({
                           background: exportFormat === 'dataset-json' ? '#f3f4f6' : '#ffffff',
                           cursor: 'pointer'
                         }}
+                        aria-pressed={exportFormat === 'dataset-json'}
+                        aria-label="Full Dataset JSON schema v1"
                       >
                         <div style={{ fontWeight: 600, fontSize: '0.9rem' }}>Full Dataset (JSON)</div>
                         <div style={{ fontSize: '0.75rem', color: '#555555', marginTop: '0.2rem' }}>
                           Schema v1 full backup for re-import or Curriculum Studio
-                        </div>
-                      </button>
-
-                      <button
-                        type="button"
-                        onClick={() => setExportFormat('curriculum-md')}
-                        style={{
-                          textAlign: 'left',
-                          padding: '0.75rem',
-                          borderRadius: '6px',
-                          border: `1px solid ${exportFormat === 'curriculum-md' ? '#111111' : '#e0e0e0'}`,
-                          background: exportFormat === 'curriculum-md' ? '#f3f4f6' : '#ffffff',
-                          cursor: 'pointer'
-                        }}
-                      >
-                        <div style={{ fontWeight: 600, fontSize: '0.9rem' }}>Curriculum (Markdown)</div>
-                        <div style={{ fontSize: '0.75rem', color: '#555555', marginTop: '0.2rem' }}>
-                          Academic syllabus with outcomes and content blocks
                         </div>
                       </button>
 
@@ -323,10 +426,32 @@ export const ImportExportModal: React.FC<ImportExportModalProps> = ({
                           background: exportFormat === 'decision-md' ? '#f3f4f6' : '#ffffff',
                           cursor: 'pointer'
                         }}
+                        aria-pressed={exportFormat === 'decision-md'}
+                        aria-label="Institutional Decision Record Markdown"
                       >
                         <div style={{ fontWeight: 600, fontSize: '0.9rem' }}>Decision Record (Markdown)</div>
                         <div style={{ fontSize: '0.75rem', color: '#555555', marginTop: '0.2rem' }}>
-                          Human–AI governance report with reviewer notes
+                          Institutional governance audit trail with reviewer rationale
+                        </div>
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => setExportFormat('curriculum-md')}
+                        style={{
+                          textAlign: 'left',
+                          padding: '0.75rem',
+                          borderRadius: '6px',
+                          border: `1px solid ${exportFormat === 'curriculum-md' ? '#111111' : '#e0e0e0'}`,
+                          background: exportFormat === 'curriculum-md' ? '#f3f4f6' : '#ffffff',
+                          cursor: 'pointer'
+                        }}
+                        aria-pressed={exportFormat === 'curriculum-md'}
+                        aria-label="Curriculum Markdown syllabus"
+                      >
+                        <div style={{ fontWeight: 600, fontSize: '0.9rem' }}>Curriculum (Markdown)</div>
+                        <div style={{ fontSize: '0.75rem', color: '#555555', marginTop: '0.2rem' }}>
+                          Academic syllabus with outcomes and content blocks
                         </div>
                       </button>
 
@@ -341,6 +466,8 @@ export const ImportExportModal: React.FC<ImportExportModalProps> = ({
                           background: exportFormat === 'decision-json' ? '#f3f4f6' : '#ffffff',
                           cursor: 'pointer'
                         }}
+                        aria-pressed={exportFormat === 'decision-json'}
+                        aria-label="Decision Record JSON"
                       >
                         <div style={{ fontWeight: 600, fontSize: '0.9rem' }}>Decision Record (JSON)</div>
                         <div style={{ fontSize: '0.75rem', color: '#555555', marginTop: '0.2rem' }}>
@@ -383,6 +510,7 @@ export const ImportExportModal: React.FC<ImportExportModalProps> = ({
                     </label>
                     <textarea
                       readOnly
+                      aria-label="Exported document preview"
                       value={exportData.content}
                       style={{
                         width: '100%',
@@ -400,11 +528,22 @@ export const ImportExportModal: React.FC<ImportExportModalProps> = ({
                   </div>
 
                   {/* Actions */}
-                  <div style={{ display: 'flex', gap: '0.75rem', justifyContent: 'flex-end', marginTop: '0.5rem' }}>
+                  <div style={{ display: 'flex', gap: '0.75rem', justifyContent: 'flex-end', marginTop: '0.5rem', flexWrap: 'wrap' }}>
+                    {exportFormat === 'decision-html' && (
+                      <button
+                        type="button"
+                        className="btn btn-secondary"
+                        onClick={handlePrintHtml}
+                        aria-label="Open report in printable format for saving as PDF"
+                      >
+                        🖨️ Print / Save as PDF
+                      </button>
+                    )}
                     <button
                       type="button"
                       className="btn btn-secondary"
                       onClick={handleCopyClipboard}
+                      aria-label="Copy export content to clipboard"
                     >
                       {copyFeedback ? '✓ Copied to Clipboard' : 'Copy to Clipboard'}
                     </button>
@@ -412,6 +551,7 @@ export const ImportExportModal: React.FC<ImportExportModalProps> = ({
                       type="button"
                       className="btn btn-primary"
                       onClick={handleDownload}
+                      aria-label={`Download file ${exportData.filename}`}
                     >
                       Download {exportData.filename}
                     </button>
@@ -430,6 +570,7 @@ export const ImportExportModal: React.FC<ImportExportModalProps> = ({
                   accept=".json,application/json"
                   onChange={handleFileUpload}
                   style={{ fontSize: '0.85rem' }}
+                  aria-label="Upload curriculum JSON file"
                 />
               </div>
 
@@ -441,6 +582,7 @@ export const ImportExportModal: React.FC<ImportExportModalProps> = ({
                   value={importJsonText}
                   onChange={(e) => setImportJsonText(e.target.value)}
                   placeholder="Paste validated curriculum dataset JSON, document array, or single document JSON..."
+                  aria-label="Paste curriculum JSON text"
                   style={{
                     width: '100%',
                     height: '140px',
@@ -557,7 +699,7 @@ export const ImportExportModal: React.FC<ImportExportModalProps> = ({
                   onClick={handleExecuteImport}
                   disabled={!importJsonText.trim()}
                 >
-                  Validate & Ingest Curriculum
+                  Validate &amp; Ingest Curriculum
                 </button>
               </div>
             </div>

@@ -55,8 +55,40 @@ a:hover {
 }
 
 :focus-visible {
-  outline: 2px solid rgba(0, 0, 0, 0.2);
+  outline: 2px solid #111111;
   outline-offset: 2px;
+}
+
+.skip-link {
+  position: absolute;
+  top: -60px;
+  left: 1rem;
+  background: #111111;
+  color: #ffffff;
+  padding: 0.5rem 1rem;
+  z-index: 9999;
+  border-radius: 4px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: top 0.2s ease-in-out;
+}
+
+.skip-link:focus {
+  top: 1rem;
+  outline: 2px solid #ffffff;
+  outline-offset: 2px;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
 }
 
 body {
@@ -425,7 +457,7 @@ h1 {
   color: var(--muted);
 }
 
-.status-pending { background: var(--color-surface-soft); color: var(--muted); }
+.status-pending { background: var(--color-surface-soft); color: #4b5563; border-color: #cbd5e1; }
 .status-accepted { background: #f0fdf4; color: #166534; border-color: #bbf7d0; }
 .status-rejected { background: #fef2f2; color: #991b1b; border-color: #fecaca; }
 .status-modified { background: #fffbeb; color: #92400e; border-color: #fef3c7; }

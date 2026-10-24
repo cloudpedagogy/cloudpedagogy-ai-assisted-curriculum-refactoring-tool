@@ -163,7 +163,12 @@ export const OutcomeManager: React.FC<OutcomeManagerProps> = ({ dataset, onUpdat
 
               {/* LIVE BLOOM'S FEEDBACK BADGE */}
               {newOutcomeAnalysis && (
-                <div style={{ marginTop: '1.25rem', flex: 1 }}>
+                <div
+                  role="status"
+                  aria-live="polite"
+                  aria-atomic="true"
+                  style={{ marginTop: '1.25rem', flex: 1 }}
+                >
                   {newOutcomeAnalysis.isVague ? (
                     <div style={{
                       padding: '0.5rem 0.75rem',
@@ -263,10 +268,18 @@ export const OutcomeManager: React.FC<OutcomeManagerProps> = ({ dataset, onUpdat
 
                   {!isEditing && (
                     <div style={{ display: 'flex', gap: '0.5rem' }}>
-                      <button className="btn btn-outline btn-sm" onClick={() => handleStartEdit(lo)}>
+                      <button
+                        className="btn btn-outline btn-sm"
+                        onClick={() => handleStartEdit(lo)}
+                        aria-label={`Edit learning outcome ${lo.id}`}
+                      >
                         Edit
                       </button>
-                      <button className="btn btn-danger btn-sm" onClick={() => handleDelete(lo.id)}>
+                      <button
+                        className="btn btn-danger btn-sm"
+                        onClick={() => handleDelete(lo.id)}
+                        aria-label={`Delete learning outcome ${lo.id}`}
+                      >
                         Delete
                       </button>
                     </div>
@@ -279,6 +292,7 @@ export const OutcomeManager: React.FC<OutcomeManagerProps> = ({ dataset, onUpdat
                       value={editStatement}
                       onChange={e => setEditStatement(e.target.value)}
                       rows={3}
+                      aria-label={`Edit statement for ${lo.id}`}
                       style={{
                         padding: '0.75rem',
                         border: '1px solid var(--primary)',
@@ -293,6 +307,7 @@ export const OutcomeManager: React.FC<OutcomeManagerProps> = ({ dataset, onUpdat
                         <select
                           value={editLevel}
                           onChange={e => setEditLevel(e.target.value as LearningOutcome['level'])}
+                          aria-label={`Select cognitive level for ${lo.id}`}
                           style={{
                             padding: '0.35rem 0.6rem',
                             border: '1px solid var(--border)',
@@ -307,10 +322,18 @@ export const OutcomeManager: React.FC<OutcomeManagerProps> = ({ dataset, onUpdat
                           ))}
                         </select>
                       </label>
-                      <button className="btn btn-primary btn-sm" onClick={() => handleSaveEdit(lo.id)}>
+                      <button
+                        className="btn btn-primary btn-sm"
+                        onClick={() => handleSaveEdit(lo.id)}
+                        aria-label={`Save edited statement for ${lo.id}`}
+                      >
                         Save
                       </button>
-                      <button className="btn btn-outline btn-sm" onClick={handleCancelEdit}>
+                      <button
+                        className="btn btn-outline btn-sm"
+                        onClick={handleCancelEdit}
+                        aria-label={`Cancel editing statement for ${lo.id}`}
+                      >
                         Cancel
                       </button>
                     </div>

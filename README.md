@@ -7,18 +7,19 @@ A local-first, governance-ready application for analysing, harmonising, and impr
 **Phase:** Phase 4 — Curriculum Extensions
 
 **Role:**
-Harmonises and refactors curriculum content by providing explainable diagnostic recommendations, word-level version comparison, and an accountable human-in-the-loop review workflow.
+Harmonises and refactors curriculum content by providing explainable diagnostic recommendations, word-level version comparison, accessible workflows, and an accountable human-in-the-loop review mechanism.
 
 **Upstream Inputs:**
 Module Registry assets from the **Shared Module Repository System** and structural definitions from the **Mapping Engine**.
 
 **Downstream Outputs:**
-Produces versioned, refactored curriculum documents and audit records for validation in the **Curriculum Simulation Tool** and institutional **Governance Dashboard**.
+Produces versioned, refactored curriculum documents and institutional governance decision records for ingestion into **Curriculum Studio**, validation in the **Curriculum Simulation Tool**, and institutional audit trails.
 
 **Does NOT:**
-- Manage institutional governance workflows or systemic risk audits.
-- Perform detailed workload or student strain simulation.
 - Impose automated AI assertions as authoritative pedagogical mandates.
+- Run uncontrolled external generative models or leak course IP to third parties.
+- Manage institutional governance approval or systemic accreditation workflows.
+- Perform detailed workload or student strain simulation.
 
 This tool supports academic review panels in identifying content gaps, detecting duplicate material, harmonising learning outcomes, and producing versioned, refactored curriculum specifications with complete provenance.
 
@@ -30,42 +31,52 @@ This tool supports academic review panels in identifying content gaps, detecting
 
 ---
 
-## 🚀 Key Features (Batch 2)
+## 🚀 Key Capabilities (Batch 3)
 
-### 1. Pedagogical Analysis & Recommendation Engine
-- **Revised Bloom's Taxonomy Indicators**: Deterministic recognition of measurable action verbs across all 6 cognitive domains (Remembering, Understanding, Applying, Analysing, Evaluating, Creating). Flags vague verbs (e.g. *understand*, *know*, *learn*) and suggests observable alternatives without overriding educator intent.
-- **Tokenised Outcome Alignment**: Stopword-filtered semantic matching identifying weakly aligned blocks and curriculum coverage gaps while preserving pedagogical keywords.
-- **Cross-Document Deduplication**: Bounded token-level Jaccard similarity detecting exact (100%) and near-duplicate (≥75%) content blocks across curriculum versions.
-- **Academic Clarity & Style**: Detects passive voice phrasing and over-long sentences (>35 words), proposing active voice alternatives.
-- **Explainable Diagnostics**: Every recommendation provides explicit document and block references, diagnostic evidence, pedagogical rationale, and proposed changes. Clearly labelled as rule-assisted heuristics rather than generative AI claims.
+### 1. Pedagogical Analysis & Diagnostic Heuristics
+* **Deterministic Rule Engine:** Employs transparent, explainable algorithms rather than opaque black-box generative models. Every recommendation exposes its exact trigger evidence and rationale.
+* **Revised Bloom's Taxonomy Indicators:** Recognises measurable action verbs across cognitive domains (Remembering, Understanding, Applying, Analysing, Evaluating, Creating) and flags vague verbs (e.g. *understand*, *know*, *learn*), offering observable alternatives without overriding educator intent.
+* **Tokenised Outcome Alignment:** Filters stopwords and evaluates semantic token overlap between learning outcomes and content blocks. Unaligned sections generate diagnostic review prompts rather than synthetic text overwrites.
+* **Cross-Document Deduplication:** Bounded token-level Jaccard similarity detecting identical (100%) and near-duplicate (≥75%) content across curriculum versions.
+* **Academic Clarity & Active Voice:** Identifies passive constructions and over-long sentences (>35 words), proposing active voice alternatives.
 
-### 2. Real Curriculum Refactoring Workflow
-- **Human Decision Controls**: Accept, modify with custom text, reject, or undo/re-evaluate suggestions before application.
-- **Before-and-After Word-Level Diffing**: Switch between side-by-side view and inline LCS word diffs highlighting added and removed phrases.
-- **Non-Destructive Version Creation**: Explicit confirmation dialogue to apply approved suggestions, generating a new, versioned document (`${title} (Refactored)`) while preserving the original curriculum document completely untouched.
-- **Block & Version Provenance**: Maintains complete audit metadata linking source content, suggestion ID, reviewer rationale, and resulting document versions.
-- **Safe Conflict Handling**: Detects and safely resolves multiple suggestions targeting the same block ID with explicit warnings.
+### 2. Human-in-the-Loop Refactoring & Versioning
+* **Educator Primacy:** Recommendations are purely advisory. Suggestions must be explicitly accepted, modified with bespoke educator text, or rejected.
+* **Stale Source & Outdated Review Protection:** If an educator edits the underlying document block after a recommendation is generated or reviewed, the suggestion is flagged for re-evaluation and blocked from application.
+* **Non-Destructive Version Creation:** Applying approved suggestions generates a brand new document version (`${title} (Refactored)`), preserving the original baseline document completely untouched.
+* **Traceable Metadata Lineage:** Every refactored block captures its source suggestion ID, original content, reviewer rationale, and timestamp.
 
 ### 3. Multi-Version Document Comparison
-- **Arbitrary Pairwise Version Selection**: Select any two curriculum versions from dropdown selectors with an instant swap control.
-- **Bounded Jaccard Similarity**: Mathematically sound similarity calculations ($[0.0, 1.0]$) handling repeated words and empty documents safely.
-- **Aligned Side-by-Side Rows**: Aligns corresponding blocks across versions with clear placeholders for added and removed sections.
-- **Word-Level Differences**: Inline word diffing for modified blocks with distinct status badges (Matched, Modified, Removed, Added).
+* **Arbitrary Version Pairing:** Compare any two curriculum documents side-by-side with instant swap controls.
+* **Word-Level Differences:** Inline LCS word diffs highlighting added and removed phrases with accessible annotations.
+* **Structural Metrics:** Computes matched, modified, removed, and added block counts alongside bounded Jaccard similarity.
 
-### 4. Learning Outcome Management
-- **Interactive Outcome Controls**: View, add, and edit learning outcomes and their declared cognitive levels.
-- **Real-Time Bloom's Feedback**: Live diagnostic indicator as educators draft outcome statements, highlighting recognised action verbs and offering alternative suggestions for vague phrasing.
+### 4. Accessibility & WCAG 2.2 AA Compliance
+* **Full Keyboard Navigation:** Logical focus progression across navigation, cards, forms, and comparison views.
+* **Visible Focus & Bypass Blocks:** High-contrast 2px focus indicators (`:focus-visible`) and a dedicated skip-to-content link.
+* **Accessible Dialog Semantics:** Modal dialogs implement `role="dialog"`, `aria-modal="true"`, focus trapping within active controls, Escape key dismissal, and automatic focus restoration upon closing.
+* **Screen-Reader Announcements:** Dynamic live regions (`aria-live="polite"`, `aria-atomic="true"`) announce analysis results, validation errors, outdated alerts, and export status.
+* **Color-Independent Feedback:** Status badges and diffs combine distinct icons, text markers (`[+ Added]`, `[- Removed]`, `[~ Modified]`, `[✓ Accepted]`), and text decoration to avoid relying on colour alone.
 
-### 5. Validated Persistence & Interchange
-- **Lossless Persistence**: Multi-tier browser storage with automatic backup rotation and corrupt-data recovery.
-- **Human–AI Decision Records**: Generates formal governance reports in Markdown and JSON documenting reviewer decisions, adoption rates, and institutional rationale.
-- **Markdown Curriculum Export**: Exports cleanly formatted academic syllabi.
+### 5. Institutional Reporting & Governance Exports
+* **Printable Standalone HTML:** Produces self-contained, publication-ready reports with `@media print` styles for direct browser Print / Save as PDF.
+* **Governance Markdown & JSON Records:** Itemised audit trails capturing review metrics, acceptance rates, educator sign-offs, and version lineage.
+* **Curriculum Studio Integration Ready:** Defined versioned interchange contract (`schemaVersion: 1`) documented in [CURRICULUM_STUDIO_INTERCHANGE.md](docs/CURRICULUM_STUDIO_INTERCHANGE.md).
+
+---
+
+## ⚠️ Known Limitations & Boundaries
+
+1. **Deterministic Heuristics vs Pedagogical Judgment:**
+   The alignment engine evaluates lexical and tokenised overlap against declared learning outcomes. It cannot infer complex disciplinary concepts or semantic equivalence without explicit keyword overlap. Heuristic findings are diagnostic indicators and must not be conflated with verified educational deficiencies.
+2. **Local Browser Storage Limits:**
+   Data is persisted locally in browser `localStorage`. Typical browser quotas are restricted to ~5MB. For large institutional archives, export datasets as JSON backups.
 
 ---
 
 ## 📖 Getting Started
 
-For detailed installation and usage instructions, please refer to:  
+For detailed installation and usage workflows, please refer to:
 👉 **[INSTRUCTIONS.md](INSTRUCTIONS.md)**
 
 ### Quick Commands
@@ -74,7 +85,7 @@ For detailed installation and usage instructions, please refer to:
 # Install dependencies
 npm install
 
-# Run automated test suite (64 tests)
+# Run automated test suite (73 tests)
 npm test
 
 # Typecheck and lint

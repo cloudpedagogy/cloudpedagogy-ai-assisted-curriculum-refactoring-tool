@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import type { CombinedDataset, RefactoringSuggestion } from '../../types';
 import { SuggestionCard } from './SuggestionCard';
 import {
@@ -29,6 +29,57 @@ export const SuggestionView: React.FC<SuggestionViewProps> = ({
   const [newVersionName, setNewVersionName] = useState('');
   const [applyRationale, setApplyRationale] = useState('');
   const [notification, setNotification] = useState<string | null>(null);
+
+  const applyModalRef = useRef<HTMLDivElement>(null);
+  const applyTriggerRef = useRef<HTMLButtonElement>(null);
+
+  // Focus trapping and Escape key management for Apply Modal
+  useEffect(() => {
+    if (!isApplyModalOpen) return;
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setIsApplyModalOpen(false);
+        applyTriggerRef.current?.focus();
+        return;
+      }
+      if (e.key === 'Tab' && applyModalRef.current) {
+        const focusables = applyModalRef.current.querySelectorAll<HTMLElement>(
+          'button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
+        );
+        if (focusables.length === 0) return;
+        const first = focusables[0];
+        const last = focusables[focusables.length - 1];
+
+        if (e.shiftKey) {
+          if (document.activeElement === first) {
+            e.preventDefault();
+            last.focus();
+          }
+        } else {
+          if (document.activeElement === last) {
+            e.preventDefault();
+            first.focus();
+          }
+        }
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    const timer = setTimeout(() => {
+      const focusable = applyModalRef.current?.querySelectorAll<HTMLElement>(
+        'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+      );
+      if (focusable && focusable.length > 0) {
+        focusable[0].focus();
+      }
+    }, 50);
+
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+      clearTimeout(timer);
+    };
+  }, [isApplyModalOpen]);
 
   // Status updates
   const updateStatus = (
@@ -209,9 +260,11 @@ export const SuggestionView: React.FC<SuggestionViewProps> = ({
             </button>
 
             <button
+              ref={applyTriggerRef}
               className="btn btn-primary"
               onClick={handleOpenApplyModal}
               title="Apply accepted and modified suggestions to generate a new document version"
+              aria-label="Open dialog to apply approved suggestions to a new version"
             >
               ✨ Apply Approved to New Version
             </button>
@@ -229,6 +282,8 @@ export const SuggestionView: React.FC<SuggestionViewProps> = ({
         {notification && (
           <div
             role="status"
+            aria-live="polite"
+            aria-atomic="true"
             style={{
               marginTop: '1rem',
               padding: '0.6rem 1rem',
@@ -424,6 +479,13 @@ export const SuggestionView: React.FC<SuggestionViewProps> = ({
         <div
           role="dialog"
           aria-modal="true"
+          aria-labelledby="apply-modal-title"
+          onClick={e => {
+            if (e.target === e.currentTarget) {
+              setIsApplyModalOpen(false);
+              applyTriggerRef.current?.focus();
+            }
+          }}
           style={{
             position: 'fixed',
             inset: 0,
@@ -436,6 +498,8 @@ export const SuggestionView: React.FC<SuggestionViewProps> = ({
           }}
         >
           <div
+            ref={applyModalRef}
+            tabIndex={-1}
             style={{
               background: 'white',
               borderRadius: '8px',
@@ -449,7 +513,7 @@ export const SuggestionView: React.FC<SuggestionViewProps> = ({
             }}
           >
             <div>
-              <h3 style={{ margin: 0, fontSize: '1.25rem', fontWeight: 700 }}>
+              <h3 id="apply-modal-title" style={{ margin: 0, fontSize: '1.25rem', fontWeight: 700 }}>
                 Apply Approved Changes to New Version
               </h3>
               <p style={{ fontSize: '0.85rem', color: 'var(--muted)', marginTop: '0.25rem' }}>
@@ -557,14 +621,20 @@ export const SuggestionView: React.FC<SuggestionViewProps> = ({
               <button
                 type="button"
                 className="btn btn-outline"
-                onClick={() => setIsApplyModalOpen(false)}
+                onClick={() => {
+                  setIsApplyModalOpen(false);
+                  applyTriggerRef.current?.focus();
+                }}
               >
                 Cancel
               </button>
               <button
                 type="button"
                 className="btn btn-primary"
-                onClick={handleConfirmApply}
+                onClick={() => {
+                  handleConfirmApply();
+                  applyTriggerRef.current?.focus();
+                }}
                 disabled={actionableSuggestionsForTarget.length === 0 || !newVersionName.trim()}
               >
                 Confirm & Create Version

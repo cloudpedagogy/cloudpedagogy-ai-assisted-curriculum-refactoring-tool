@@ -110,6 +110,7 @@ export interface CombinedDataset {
 export interface HumanDecisionRecord {
   generatedAt: string;
   schemaVersion: number;
+  disclaimer?: string;
   governance: {
     aiInvolvement?: string;
     assumptions?: string;
@@ -117,12 +118,22 @@ export interface HumanDecisionRecord {
     rationale?: string;
     reviewNotes?: string;
   };
+  documentVersions?: Array<{
+    documentId: string;
+    title: string;
+    version: string;
+    author?: string;
+    blockCount: number;
+    isRefactoredVersion?: boolean;
+    parentDocumentId?: string;
+  }>;
   metrics: {
     totalSuggestions: number;
     pendingCount: number;
     acceptedCount: number;
     modifiedCount: number;
     rejectedCount: number;
+    outdatedCount?: number;
     acceptanceRatePercent: number;
   };
   decisions: Array<{
@@ -135,6 +146,8 @@ export interface HumanDecisionRecord {
     originalContent: string;
     effectiveContent: string;
     rationale: string;
+    isOutdated?: boolean;
+    outdatedReason?: string;
     reviewedAt?: string;
     reviewerNotes?: string;
   }>;

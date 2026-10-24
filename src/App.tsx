@@ -118,19 +118,23 @@ function App() {
   return (
     <ErrorBoundary>
       <div className="app-container">
+        <a href="#main-content" className="skip-link">
+          Skip to main content
+        </a>
         <div className="branding-header">
           <a href="https://www.cloudpedagogy.com/" target="_blank" rel="noopener noreferrer" className="cloud-pedagogy-link">
             CloudPedagogy
           </a>
         </div>
-        <header className="header">
+        <header className="header" role="banner">
           <div className="header-top">
             <h1>AI-Assisted Curriculum Refactoring Tool</h1>
             <div className="action-buttons">
               <button
                 className="btn btn-secondary"
                 onClick={() => { setModalTab('import'); setIsModalOpen(true); }}
-                aria-label="Open import dialog"
+                aria-label="Open import curriculum dialog"
+                aria-haspopup="dialog"
               >
                 Import
               </button>
@@ -138,12 +142,17 @@ function App() {
                 className="btn btn-secondary"
                 onClick={() => { setModalTab('export'); setIsModalOpen(true); }}
                 disabled={!dataset}
-                aria-label="Open export dialog"
+                aria-label="Open export and governance report dialog"
+                aria-haspopup="dialog"
               >
                 Export
               </button>
-              <button className="btn btn-secondary" onClick={handleLoadDemo}>Load Demo Data</button>
-              <button className="btn btn-danger" onClick={handleReset}>Reset Data</button>
+              <button className="btn btn-secondary" onClick={handleLoadDemo} aria-label="Load sample curriculum dataset">
+                Load Demo Data
+              </button>
+              <button className="btn btn-danger" onClick={handleReset} aria-label="Reset curriculum workspace data">
+                Reset Data
+              </button>
             </div>
           </div>
 
@@ -194,6 +203,8 @@ function App() {
           {statusNotification && (
             <div
               role="status"
+              aria-live="polite"
+              aria-atomic="true"
               style={{
                 marginTop: '1rem',
                 padding: '0.6rem 1rem',
@@ -219,7 +230,7 @@ function App() {
           )}
         </header>
 
-        <main>
+        <main id="main-content" role="main">
           {dataset ? (
             <>
               <section className="summary-grid">
@@ -352,7 +363,7 @@ function App() {
           )}
         </main>
 
-        <footer className="footer">
+        <footer className="footer" role="contentinfo">
           <p className="footer-text">CloudPedagogy · Governance-ready AI and curriculum systems</p>
         </footer>
 

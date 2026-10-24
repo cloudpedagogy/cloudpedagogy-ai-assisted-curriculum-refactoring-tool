@@ -66,25 +66,32 @@ This application provides local-first, rule-assisted diagnostic analysis and ref
 - Inspect the summary metrics: Matched Sections, Modified, Removed, Added, and Bounded Structural Similarity.
 - Review the aligned rows: Modified blocks display word-level additions in green and removals in red strikethrough; added/removed blocks show aligned placeholders.
 
-#### Step 6: Document Governance & Export
+#### Step 6: Institutional Governance Reporting & Export
 - Expand the **"Capability & Governance Notes"** drawer at the bottom of the page to record declared AI involvement, pedagogical assumptions, and risks.
 - Click **"Export"** in the top action bar:
-  - **Full Dataset (JSON)**: Schema-validated backup for storage or re-import.
+  - **Governance Record (HTML / PDF)**: Formatted, self-contained audit report with `@media print` styles. Click **"🖨️ Print / Save as PDF"** for clean browser print-to-PDF.
+  - **Decision Record (Markdown / JSON)**: Formal institutional audit trail capturing reviewer decisions, adoption metrics, and version lineage.
+  - **Full Dataset (JSON)**: Canonical schema v1 backup for re-import or Curriculum Studio ingestion.
   - **Curriculum (Markdown)**: Formatted syllabus with learning outcomes and block structure.
-  - **Decision Record (Markdown / JSON)**: Formal institutional report documenting all reviewer decisions, reviewer notes, and adoption rates.
+
+#### Step 7: Keyboard Navigation & Accessibility Support
+- **Skip Link**: Press `Tab` upon page load to activate the "Skip to main content" link and bypass header navigation.
+- **Dialog Controls**: Modal dialogs support `Escape` key dismissal and trap keyboard focus (`Tab` / `Shift+Tab`) within the dialog. Focus is restored to the triggering button upon close.
+- **Screen Reader Announcements**: Live regions automatically announce analysis results, validation errors, outdated alerts, and export status.
 
 ---
 
 ### 5. Data Privacy & Local Persistence
 - **100% Local Execution**: All tokenisation, diffing, Bloom's parsing, and persistence occur exclusively in the client browser. No data is sent over the network.
 - **Storage Resilience**: Multi-tier storage in browser `localStorage` includes automated backup rotation. If corrupted data is introduced, the system recovers from backup safely without overwriting good data.
+- **Integration Readiness**: Interchange contract specifications are detailed in [`docs/CURRICULUM_STUDIO_INTERCHANGE.md`](docs/CURRICULUM_STUDIO_INTERCHANGE.md).
 
 ---
 
 ### 6. Automated Verification Commands
 
 ```bash
-# Execute all 64 automated tests
+# Execute all 73 automated tests
 npm test
 
 # Verify TypeScript types

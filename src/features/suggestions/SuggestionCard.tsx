@@ -80,24 +80,32 @@ export const SuggestionCard: React.FC<SuggestionCardProps> = ({
             {documentTitle ? `${documentTitle} · ` : ''}Block: <code>{suggestion.targetBlockId}</code>
           </span>
         </div>
-        <span className={`suggestion-status status-${suggestion.status}`}>
-          {suggestion.status}
+        <span
+          className={`suggestion-status status-${suggestion.status}`}
+          aria-label={`Decision status: ${suggestion.status}`}
+        >
+          {suggestion.status === 'accepted' ? '✓ Accepted' :
+           suggestion.status === 'modified' ? '✎ Modified' :
+           suggestion.status === 'rejected' ? '✗ Rejected' : '⏳ Pending'}
         </span>
       </div>
 
       {suggestion.isOutdated && (
-        <div style={{
-          background: '#fef2f2',
-          border: '1px solid #fecaca',
-          color: '#991b1b',
-          padding: '0.6rem 0.85rem',
-          borderRadius: '6px',
-          fontSize: '0.82rem',
-          marginBottom: '1rem',
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center'
-        }}>
+        <div
+          role="alert"
+          style={{
+            background: '#fef2f2',
+            border: '1px solid #fecaca',
+            color: '#991b1b',
+            padding: '0.6rem 0.85rem',
+            borderRadius: '6px',
+            fontSize: '0.82rem',
+            marginBottom: '1rem',
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center'
+          }}
+        >
           <div>
             ⚠️ <strong>Re-evaluation Required:</strong> {suggestion.outdatedReason || 'Underlying block content has changed since this review was recorded.'}
           </div>
@@ -106,6 +114,7 @@ export const SuggestionCard: React.FC<SuggestionCardProps> = ({
             className="btn btn-outline btn-sm"
             style={{ fontSize: '0.75rem', padding: '2px 8px', background: 'white', color: '#991b1b', borderColor: '#fca5a5' }}
             onClick={() => onUndo(suggestion.id)}
+            aria-label={`Re-evaluate outdated suggestion ${suggestion.id}`}
           >
             Re-evaluate Now
           </button>
@@ -155,16 +164,18 @@ export const SuggestionCard: React.FC<SuggestionCardProps> = ({
               return (
                 <ins
                   key={idx}
+                  aria-label={`Added: ${chunk.text}`}
                   style={{
                     background: '#dcfce7',
                     color: '#166534',
-                    textDecoration: 'none',
+                    textDecoration: 'underline',
+                    textUnderlineOffset: '2px',
                     padding: '2px 4px',
                     borderRadius: '3px',
                     fontWeight: 600
                   }}
                 >
-                  {chunk.text}
+                  <span className="sr-only">[Added: ]</span>{chunk.text}
                 </ins>
               );
             }
@@ -172,6 +183,7 @@ export const SuggestionCard: React.FC<SuggestionCardProps> = ({
               return (
                 <del
                   key={idx}
+                  aria-label={`Removed: ${chunk.text}`}
                   style={{
                     background: '#fee2e2',
                     color: '#991b1b',
@@ -180,7 +192,7 @@ export const SuggestionCard: React.FC<SuggestionCardProps> = ({
                     borderRadius: '3px'
                   }}
                 >
-                  {chunk.text}
+                  <span className="sr-only">[Removed: ]</span>{chunk.text}
                 </del>
               );
             }
@@ -249,23 +261,43 @@ export const SuggestionCard: React.FC<SuggestionCardProps> = ({
       {/* ACTIONS */}
       {isEditing ? (
         <div className="decision-actions">
-          <button className="btn btn-primary btn-sm" onClick={handleSaveModification}>
+          <button
+            className="btn btn-primary btn-sm"
+            onClick={handleSaveModification}
+            aria-label={`Save modifications for suggestion ${suggestion.id}`}
+          >
             Save as Modified
           </button>
-          <button className="btn btn-outline btn-sm" onClick={handleCancelEdit}>
+          <button
+            className="btn btn-outline btn-sm"
+            onClick={handleCancelEdit}
+            aria-label={`Cancel editing suggestion ${suggestion.id}`}
+          >
             Cancel
           </button>
         </div>
       ) : suggestion.status === 'pending' ? (
         <div className="decision-actions" style={{ justifyContent: 'space-between', alignItems: 'center' }}>
           <div style={{ display: 'flex', gap: '0.75rem' }}>
-            <button className="btn btn-primary" onClick={handleAcceptClick}>
+            <button
+              className="btn btn-primary"
+              onClick={handleAcceptClick}
+              aria-label={`Accept suggestion ${suggestion.id}`}
+            >
               Accept
             </button>
-            <button className="btn btn-outline" onClick={handleModifyClick}>
+            <button
+              className="btn btn-outline"
+              onClick={handleModifyClick}
+              aria-label={`Modify suggestion ${suggestion.id}`}
+            >
               Modify
             </button>
-            <button className="btn btn-danger" onClick={handleRejectClick}>
+            <button
+              className="btn btn-danger"
+              onClick={handleRejectClick}
+              aria-label={`Reject suggestion ${suggestion.id}`}
+            >
               Reject
             </button>
           </div>
@@ -275,6 +307,7 @@ export const SuggestionCard: React.FC<SuggestionCardProps> = ({
               className="btn btn-outline btn-sm"
               style={{ fontSize: '0.75rem' }}
               onClick={() => setShowNotesInput(true)}
+              aria-label={`Add reviewer note for suggestion ${suggestion.id}`}
             >
               + Add Reviewer Note
             </button>
@@ -296,7 +329,7 @@ export const SuggestionCard: React.FC<SuggestionCardProps> = ({
             type="button"
             className="btn btn-outline btn-sm"
             onClick={() => onUndo(suggestion.id)}
-            aria-label="Undo and re-evaluate this recommendation decision"
+            aria-label={`Undo decision and re-evaluate recommendation ${suggestion.id}`}
             style={{ fontWeight: 600 }}
           >
             ↩ Undo / Re-evaluate
