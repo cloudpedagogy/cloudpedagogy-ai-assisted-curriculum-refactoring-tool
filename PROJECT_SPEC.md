@@ -4,64 +4,63 @@
 `cloudpedagogy-ai-assisted-curriculum-refactoring-tool`
 
 ## 2. One-Sentence Purpose
-A granular content-level tool for comparing, analyzing, and refactoring curriculum materials using AI-powered suggestions.
+A granular content-level tool for comparing, analysing, and refactoring curriculum materials using AI-powered suggestions with human-in-the-loop decision governance.
 
 ## 3. Problem the App Solves
-Difficulty in iteratively refactoring learning materials for consistency, clarity, and Bloom's Taxonomy alignment when moving between legacy and AI-enhanced curriculum versions.
+Difficulty in iteratively refactoring learning materials for consistency, clarity, and Bloom's Taxonomy alignment when moving between legacy and AI-enhanced curriculum versions, while preserving institutional oversight and accountability.
 
 ## 4. Primary User / Audience
-Curriculum designers, learning technologists, and educators.
+Curriculum designers, learning technologists, educational developers, and academic programme leads.
 
 ## 5. Core Role in the CloudPedagogy Ecosystem
-Handles the granular *content* and *instructional design* layer, supplementing high-level mapping tools with specific block-level rewrite suggestions and similarity analysis.
+Handles the granular *content* and *instructional design* layer, supplementing high-level mapping tools with specific block-level rewrite suggestions, similarity analysis, and formal decision governance.
 
 ## 6. Main Entities / Data Structures
-- **ContentDocument**: A collection of logical content blocks representing a unit of curriculum.
-- **ContentBlock**: The most granular data unit (paragraph, list, interaction, etc.).
-- **LearningOutcome**: Statements classified by Bloom's Taxonomy levels.
-- **RefactoringSuggestion**: AI-generated proposed edits (merge, gap, update) with explicit rationale.
+- **ContentDocument**: A collection of logical content blocks representing a unit of curriculum (id, title, version, author, blocks).
+- **ContentBlock**: The most granular data unit (id, type, content, metadata, tags).
+- **LearningOutcome**: Statements classified by Bloom's Taxonomy cognitive levels.
+- **RefactoringSuggestion**: Proposed pedagogical edits (merge, gap, update, clarity, sequence) with explicit rationale, targetBlockId, and documentId references.
 - **ComparisonResult**: Data mapping similarities and differences between two document versions.
+- **CombinedDataset (Schema Version 1)**: Unified state container with schemaVersion, documents, contentBlocks, learningOutcomes, suggestions, comparisons, and capability/governance statements.
+- **HumanDecisionRecord**: Formatted governance document summarizing review metrics, capability declarations, and itemised decisions (Accepted, Modified, Rejected).
 
 ## 7. Main User Workflows
-1. **Document Import**: Upload source and target versions of curriculum content.
-2. **Comparison Execution**: Run similarity analysis to identify matched and orphaned content blocks.
-3. **Suggestion Review**: Evaluate AI-generated suggestions for refactoring content.
-4. **Finalization**: Accept, reject, or modify suggested changes to produce a refactored document.
+1. **Curriculum Ingestion**: Load built-in demo curriculum or import external JSON (full dataset, document array, or single document) with schema validation.
+2. **Explorer & Consistency Check**: Review documents, block hierarchy, duplicate warnings, and learning outcome alignment.
+3. **Comparison Execution**: Run pairwise similarity analysis across versions.
+4. **Human Decision Review**: Evaluate candidate suggestions, modify text inline, accept or reject proposed edits, and review the audit trail.
+5. **Governance Declaration**: Document AI involvement, pedagogical assumptions, risks, rationale, and reviewer sign-off.
+6. **Data Export & Reporting**: Export full JSON datasets, formatted curriculum Markdown, or formal Human–AI Decision Records (Markdown/JSON).
 
-## 8. Current Features
-- Granular block-level data management.
-- Document comparison interface.
-- Similarity scoring and matching.
-- Rationale-backed suggestions.
-- Bloom's Taxonomy classification for outcomes.
+## 8. Current Features (Batch 1 Complete)
+- Validated and versioned data contracts (`schemaVersion: 1`).
+- Single source of truth for documents and content blocks with automatic projection synchronization.
+- Unambiguous document and block references for suggestions (`documentId`, `targetBlockId`).
+- Multi-tier local storage resilience: automatic backups, backward-compatible schema migration (v0 to v1), and corrupted-syntax recovery.
+- Complete import/export subsystem:
+  - Validated JSON curriculum import with merge or replace options.
+  - Full dataset JSON export.
+  - Curriculum Markdown export (individual document or all versions).
+  - Formal Human–AI Decision Record export in Markdown and JSON.
+- Fault-tolerant React `ErrorBoundary` with diagnostic recovery export.
+- Automated Vitest test suite covering validation, migration, storage recovery, serialization, and referential integrity.
+- Zero ESLint errors, clean typecheck, and production Vite build.
 
-## 9. Stubbed / Partial / Incomplete Features
-- Not explicitly defined, though granular metadata fields for `ContentBlock` are listed as optional.
+## 9. Planned Upgrades (Batch 2 & Batch 3)
+- **Batch 2**: Rule-based & heuristic pedagogical suggestion generator, Revised Bloom's Taxonomy action-verb analyzer, refactoring application engine producing new document versions, and inline word-level diffing.
+- **Batch 3**: WCAG 2.1 AA accessibility audit, full integration workflow tests, and Curriculum Studio data interchange connector.
 
 ## 10. Import / Export and Storage Model
-- **Storage**: Browser `localStorage` (`curriculum_refactoring_tool_data`).
-- **Import/Export**: JSON-based full dataset serialization.
+- **Storage**: Browser `localStorage` (`curriculum_refactoring_tool_data`) with automated backup (`curriculum_refactoring_tool_data_backup`).
+- **Import/Export**: JSON-based dataset exchange and Markdown document/audit serialization.
 
 ## 11. Relationship to Other CloudPedagogy Apps
-Operates at a lower level of abstraction than the `mapping-engine`; refactored outcomes and content could eventually feed higher-order mapping or simulation datasets.
+Operates at the content and instructional design level; refactored outcomes and materials feed into the **Curriculum Simulation Tool** and institutional **Governance Dashboard**.
 
-## 12. Potential Overlap or Duplication Risks
-Minimal overlap with general assessment tools; specialized in the "Document vs. Document" refactoring workflow.
+## 12. Distinctive Value of This App
+Provides the most granular instructional design workbench in the suite with an unyielding human-in-the-loop audit trail documenting rationale and oversight for every curriculum edit.
 
-## 13. Distinctive Value of This App
-The most granular tool in the suite; provides an explicit audit trail of "Rationale" for every suggested curriculum edit.
-
-## 14. Recommended Future Enhancements
-(Inferred) Direct API integration with Learning Management Systems (LMS) for content push/pull; expanded taxonomy support beyond Bloom's.
-
-## 15. Anything Unclear or Inferred from Repo Contents
-The specific AI model requirements for generating `RefactoringSuggestion` rationale are inferred as external but provided via the tool's interface logic.
-
-## Capability and Governance Alignment
-
-This tool is aligned with the CloudPedagogy Capability and Governance standard.
-
-- Capability: The tool supports development of practical AI capability through structured interaction and workflow use.
-- Governance: The tool includes lightweight, optional fields that make assumptions, risks, and decisions visible and reviewable.
-
-This alignment ensures the tool supports both effective use of AI and responsible, accountable practice.
+## 13. Capability and Governance Alignment
+This tool adheres to the CloudPedagogy Capability and Governance standard:
+- **Capability**: Builds practical staff judgement through direct interaction with AI and heuristic proposals.
+- **Governance**: Transparent, non-blocking fields make assumptions, risks, and human sign-offs explicit and exportable.

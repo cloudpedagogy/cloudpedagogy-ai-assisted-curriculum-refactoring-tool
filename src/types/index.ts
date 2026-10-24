@@ -1,11 +1,16 @@
 /**
+ * Current schema version for CombinedDataset persistence and interchange.
+ */
+export const CURRENT_SCHEMA_VERSION = 1;
+
+/**
  * Core content block represents a single pedagogical unit or concept.
  */
 export interface ContentBlock {
   id: string;
   type: 'paragraph' | 'heading' | 'list' | 'image' | 'video' | 'interaction';
   content: string;
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
   tags?: string[];
 }
 
@@ -18,6 +23,8 @@ export interface ContentDocument {
   version: string;
   author?: string;
   blocks: ContentBlock[];
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 /**
@@ -45,6 +52,7 @@ export interface ComparisonResult {
     targetBlockId?: string;
     description: string;
   }>;
+  createdAt?: string;
 }
 
 /**
@@ -62,6 +70,7 @@ export interface ComparisonSummary {
 export interface RefactoringSuggestion {
   id: string;
   targetBlockId: string;
+  documentId?: string; // Explicit document association for unambiguous traceability
   type: 'merge' | 'gap' | 'update' | 'clarity' | 'sequence';
   originalContent: string;
   suggestedContent: string;
@@ -69,18 +78,21 @@ export interface RefactoringSuggestion {
   rationale: string;
   status: 'pending' | 'accepted' | 'rejected' | 'modified';
   reviewedAt?: string;
+  reviewerNotes?: string; // Human review rationale or notes for this decision
 }
 
 /**
  * The full state of the tool's loaded data.
  */
 export interface CombinedDataset {
+  schemaVersion: number;
+  exportedAt?: string;
   documents: ContentDocument[];
   contentBlocks: ContentBlock[];
   learningOutcomes: LearningOutcome[];
   suggestions: RefactoringSuggestion[];
   comparisons: ComparisonResult[];
-  
+
   // Lightweight capability and governance layer
   // Optional, non-blocking, and does not alter core workflow
   aiInvolvement?: string;
@@ -88,4 +100,50 @@ export interface CombinedDataset {
   risks?: string;
   rationale?: string;
   reviewNotes?: string;
+}
+
+/**
+ * Structured Human-AI Decision Record for governance exports.
+ */
+export interface HumanDecisionRecord {
+  generatedAt: string;
+  schemaVersion: number;
+  governance: {
+    aiInvolvement?: string;
+    assumptions?: string;
+    risks?: string;
+    rationale?: string;
+    reviewNotes?: string;
+  };
+  metrics: {
+    totalSuggestions: number;
+    pendingCount: number;
+    acceptedCount: number;
+    modifiedCount: number;
+    rejectedCount: number;
+    acceptanceRatePercent: number;
+  };
+  decisions: Array<{
+    suggestionId: string;
+    documentId?: string;
+    documentTitle?: string;
+    targetBlockId: string;
+    type: string;
+    status: 'pending' | 'accepted' | 'rejected' | 'modified';
+    originalContent: string;
+    effectiveContent: string;
+    rationale: string;
+    reviewedAt?: string;
+    reviewerNotes?: string;
+  }>;
+}
+
+/**
+ * Result of validating an imported or migrated dataset.
+ */
+export interface ValidationResult {
+  valid: boolean;
+  errors: string[];
+  warnings: string[];
+  dataset?: CombinedDataset;
 }

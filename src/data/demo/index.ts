@@ -1,4 +1,10 @@
-import type { ContentDocument, ContentBlock, LearningOutcome, CombinedDataset } from '../../types';
+import {
+  CURRENT_SCHEMA_VERSION,
+  type ContentDocument,
+  type ContentBlock,
+  type LearningOutcome,
+  type CombinedDataset
+} from '../../types';
 
 const version1Blocks: ContentBlock[] = [
   { id: 'v1-b1', type: 'heading', content: 'Epidemiology 101: Foundations' },
@@ -48,12 +54,14 @@ export const demoLearningOutcomes: LearningOutcome[] = [
 ];
 
 export const demoDataset: CombinedDataset = {
+  schemaVersion: CURRENT_SCHEMA_VERSION,
   documents: demoDocuments,
-  contentBlocks: [...version1Blocks, ...version2Blocks, ...version3Blocks],
+  contentBlocks: demoDocuments.flatMap(doc => doc.blocks),
   learningOutcomes: demoLearningOutcomes,
   suggestions: [
     {
       id: 'sug-1',
+      documentId: 'doc-v1',
       targetBlockId: 'v1-b2',
       type: 'update',
       originalContent: 'Epidemiology is the science of disease distribution in human populations.',
@@ -63,21 +71,27 @@ export const demoDataset: CombinedDataset = {
     },
     {
       id: 'sug-2',
+      documentId: 'doc-v1',
       targetBlockId: 'v1-b3',
       type: 'merge',
       originalContent: 'It focuses on identifying risk factors and preventative measures.',
       suggestedContent: 'It focuses on identifying risk factors, determinants of health, and data-driven preventative measures.',
       rationale: 'Reason: Overlapping theme with current public health policy standards (Deduplication).',
-      status: 'accepted'
+      status: 'accepted',
+      reviewedAt: '2026-10-24T11:30:00.000Z',
+      reviewerNotes: 'Accepted for terminology deduplication.'
     },
     {
       id: 'sug-3',
+      documentId: 'doc-v2',
       targetBlockId: 'v2-b1',
       type: 'clarity',
       originalContent: 'Modern Epidemiology Concepts',
       suggestedContent: 'Foundations of Modern Epidemiology and Public Health Practice',
       rationale: 'Reason: Improved alignment with Learning Outcome #1 (Analysis).',
-      status: 'rejected'
+      status: 'rejected',
+      reviewedAt: '2026-10-24T11:35:00.000Z',
+      reviewerNotes: 'Retaining concise heading for modular syllabus.'
     }
   ],
   comparisons: []

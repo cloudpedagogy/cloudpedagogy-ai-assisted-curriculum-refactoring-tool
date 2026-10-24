@@ -37,7 +37,7 @@ export function detectConsistencyIssues(blocks: ContentBlock[]): { blockId: stri
     contentMap.get(normalized)!.push(block.id);
   });
 
-  contentMap.forEach((ids, _content) => {
+  contentMap.forEach((ids) => {
     if (ids.length > 1) {
       ids.forEach(id => {
         issues.push({ blockId: id, type: 'Exact Duplicate' });
@@ -54,15 +54,26 @@ export function detectConsistencyIssues(blocks: ContentBlock[]): { blockId: stri
 export function getRefactoringAnalytics(suggestions: RefactoringSuggestion[]) {
   const total = suggestions.length;
   const accepted = suggestions.filter(s => s.status === 'accepted').length;
-  
+  const modified = suggestions.filter(s => s.status === 'modified').length;
+  const rejected = suggestions.filter(s => s.status === 'rejected').length;
+  const pending = suggestions.filter(s => s.status === 'pending').length;
+
   const areas = {
     clarity: suggestions.filter(s => s.type === 'clarity').length,
     alignment: suggestions.filter(s => s.type === 'update' || s.type === 'gap').length,
     structural: suggestions.filter(s => s.type === 'sequence' || s.type === 'merge').length
   };
 
+  // Accepted or modified reflect adopted suggestions
+  const adopted = accepted + modified;
+
   return {
-    acceptanceRate: total > 0 ? (accepted / total) * 100 : 0,
+    total,
+    accepted,
+    modified,
+    rejected,
+    pending,
+    acceptanceRate: total > 0 ? (adopted / total) * 100 : 0,
     improvementAreas: areas
   };
 }
